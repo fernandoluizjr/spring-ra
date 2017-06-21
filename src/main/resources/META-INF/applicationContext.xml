@@ -1,7 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-ip="http://www.springframework.org/schema/integration/ip"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans.xsd">
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/ip
+		http://www.springframework.org/schema/integration/ip/spring-integration-ip.xsd">
 
+	<bean id="taskScheduler" class="org.springframework.scheduling.commonj.TimerManagerTaskScheduler">
+		<property name="timerManagerName" value="tm/MyTimerManager" />
+		<property name="resourceRef" value="true" />
+	</bean>
+
+	<bean id="javaSerializer" class="org.springframework.core.serializer.DefaultSerializer" />
+	<bean id="javaDeserializer" class="org.springframework.core.serializer.DefaultDeserializer" />
+
+	<int-ip:tcp-connection-factory id="server"
+		type="server"
+		port="1234"
+		using-nio="true"
+		deserializer="javaDeserializer"
+		serializer="javaSerializer" />
+
+	<int-ip:tcp-connection-factory id="client"
+		type="client"
+		host="localhost"
+		port="1234"
+		single-use="true"
+		so-timeout="10000"
+		using-nio="true"
+		deserializer="javaDeserializer"
+		serializer="javaSerializer" />
 </beans>
